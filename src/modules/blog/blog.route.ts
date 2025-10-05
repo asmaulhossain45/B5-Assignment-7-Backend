@@ -12,7 +12,13 @@ router.get("/", checkAuth(Role.ADMIN), BlogController.getAllBlogs);
 
 router.get("/:slug", checkAuth(Role.ADMIN), BlogController.getSingleBlog);
 
-router.post("/", multerUpload.single("thumb"), BlogController.createBlog);
+router.post(
+  "/",
+  multerUpload.single("thumb"),
+  validateRequest(BlogValidation.createBlog),
+  checkAuth(Role.ADMIN),
+  BlogController.createBlog
+);
 
 router.patch(
   "/:slug",

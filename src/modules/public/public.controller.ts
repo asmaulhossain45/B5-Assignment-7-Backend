@@ -5,15 +5,13 @@ import sendResponse from "../../utils/sendResponse";
 import { PublicService } from "./public.service";
 
 const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
-  const query = req.query;
-  const result = await PublicService.getAllBlogs(query);
+  const result = await PublicService.getAllBlogs();
 
   sendResponse(res, {
     statusCode: STATUS_CODE.OK,
     success: true,
     message: "Blogs retrieved successfully",
-    data: result.data,
-    meta: result.meta,
+    data: result,
   });
 });
 
@@ -30,15 +28,13 @@ const getSingleBlog = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllProjects = catchAsync(async (req: Request, res: Response) => {
-  const query = req.query;
-  const result = await PublicService.getAllProjects(query);
+  const result = await PublicService.getAllProjects();
 
   sendResponse(res, {
     statusCode: STATUS_CODE.OK,
     success: true,
     message: "Projects retrieved successfully",
-    data: result.data,
-    meta: result.meta,
+    data: result,
   });
 });
 

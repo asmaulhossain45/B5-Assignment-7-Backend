@@ -1,18 +1,15 @@
+import { PostStatus } from "@prisma/client";
 import { prisma } from "../../config/database";
 import STATUS_CODE from "../../config/statusCode";
 import AppError from "../../utils/appError";
-import { queryBuilder } from "../../utils/queryBuilder";
 
-const getAllBlogs = async (query: any) => {
-  const searchFields = ["title", "excerpt", "content"];
-
-  const result = await queryBuilder({
-    model: prisma.blog,
-    query,
-    searchFields,
+const getAllBlogs = async () => {
+  const blogs = await prisma.blog.findMany({
+    where: { status: PostStatus.PUBLISHED },
+    orderBy: { createdAt: "desc" },
   });
 
-  return result;
+  return blogs;
 };
 
 const getSingleBlog = async (slug: string) => {
@@ -25,20 +22,11 @@ const getSingleBlog = async (slug: string) => {
   return result;
 };
 
-const getAllProjects = async (query: any) => {
-  const searchFields = ["title", "excerpt", "content"];
-
-  const result = await queryBuilder({
-    model: prisma.project,
-    query,
-    searchFields,
-    select: {
-      slug: true,
-      content: true,
-    },
+const getAllProjects = async () => {
+  return await prisma.project.findMany({
+    where: { status: PostStatus.PUBLISHED },
+    orderBy: { createdAt: "desc" },
   });
-
-  return result;
 };
 
 const getSingleProject = async (slug: string) => {

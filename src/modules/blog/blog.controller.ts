@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { deleteCloudinaryImage } from "../../config/cloudinary";
 import STATUS_CODE from "../../config/statusCode";
 import { TFile } from "../../type/TFile";
 import catchAsync from "../../utils/catchAsync";
@@ -32,9 +31,6 @@ const getSingleBlog = catchAsync(async (req: Request, res: Response) => {
 const createBlog = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const uploadedFile = req.file as TFile;
-
-  const delt = await deleteCloudinaryImage(uploadedFile?.path as string);
-  console.log({ delt });
   const result = await BlogService.createBlog(payload, uploadedFile);
 
   sendResponse(res, {

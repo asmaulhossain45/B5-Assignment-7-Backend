@@ -1,4 +1,5 @@
 import { Blog } from "@prisma/client";
+import { deleteCloudinaryImage } from "../../config/cloudinary";
 import { prisma } from "../../config/database";
 import STATUS_CODE from "../../config/statusCode";
 import { TFile } from "../../type/TFile";
@@ -23,7 +24,20 @@ const getSingleBlog = async (slug: string) => {
 const createBlog = async (payload: Blog, uploadedFile: TFile) => {
   const slug = await generateSlug("blog", "slug", payload.title);
 
-  return slug;
+  const blog = await prisma.blog.create({
+    data: {
+      ...payload,
+      slug,
+      thumb: uploadedFile.path,
+    },
+  });
+
+  if (!blog) {
+    await deleteCloudinaryImage(uploadedFile.path);
+    throw new AppError(STATUS_CODE.BAD_REQUEST, "Failed to create blog");
+  }
+
+  return blog;
 };
 
 const updateBlog = async (slug: string, payload: Blog) => {

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "seed:admin": "ts-node src/seed/admin.ts",
+    "seed:blogs": "ts-node src/seed/blogs.ts",
+    "seed:projects": "ts-node src/seed/projects.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

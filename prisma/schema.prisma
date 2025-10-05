@@ -36,11 +36,13 @@ model Project {
   status      PostStatus @default(DRAFT)
   category    String
   description String
-  liveUrl     String?
-  repoUrl     String?
   thumb       String
-  startDate   DateTime
-  endDate     DateTime?
+
+  liveUrl String?
+  repoUrl String?
+
+  startDate DateTime
+  endDate   DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -51,13 +53,15 @@ model Project {
 }
 
 model Blog {
-  id      Int        @id @default(autoincrement())
-  title   String     @db.VarChar(255)
-  slug    String     @unique @db.VarChar(255)
-  status  PostStatus @default(DRAFT)
-  excerpt String     @db.VarChar(500)
-  content String
-  thumb   String
+  id       Int        @id @default(autoincrement())
+  title    String     @db.VarChar(255)
+  slug     String     @unique @db.VarChar(255)
+  status   PostStatus @default(DRAFT)
+  excerpt  String     @db.VarChar(500)
+  content  String
+  category String
+  thumb    String
+  views    Int        @default(0)
 
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
