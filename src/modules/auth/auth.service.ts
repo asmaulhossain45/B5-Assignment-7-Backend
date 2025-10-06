@@ -4,19 +4,29 @@ import AppError from "../../utils/appError";
 import { comparePassword, hashPassword } from "../../utils/bcrypt";
 import { AuthPayload, generateToken } from "../../utils/jwt";
 
-const login = async (payload: { email: string; password: string }) => {
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface ChangePasswordPayload {
+  oldPassword: string;
+  newPassword: string;
+}
+
+const login = async (payload: LoginPayload) => {
   const user = await prisma.user.findUnique({
     where: { email: payload.email },
   });
 
   if (!user) {
-    throw new AppError(STATUS_CODE.NOT_FOUND, "User not found");
+    throw new AppError(STATUS_CODE.UNAUTHORIZED, "Invalid email or password");
   }
 
   const isMatch = await comparePassword(payload.password, user.password);
 
   if (!isMatch) {
-    throw new AppError(STATUS_CODE.UNAUTHORIZED, "Invalid password");
+    throw new AppError(STATUS_CODE.UNAUTHORIZED, "Invalid email or password");
   }
 
   const authPayload: AuthPayload = {
@@ -25,7 +35,7 @@ const login = async (payload: { email: string; password: string }) => {
     role: user.role,
   };
 
-  const token = await generateToken(authPayload);
+  const token = generateToken(authPayload);
 
   const { password, ...userWithoutPassword } = user;
 
@@ -36,7 +46,7 @@ const login = async (payload: { email: string; password: string }) => {
 };
 
 const changePassword = async (
-  payload: { oldPassword: string; newPassword: string },
+  payload: ChangePasswordPayload,
   user: AuthPayload
 ) => {
   const userExists = await prisma.user.findUnique({
@@ -53,8 +63,18 @@ const changePassword = async (
   );
 
   if (!isMatch) {
-    throw new AppError(STATUS_CODE.UNAUTHORIZED, "Invalid password");
+    throw new AppError(STATUS_CODE.UNAUTHORIZED, "Invalid old password");
   }
+
+  const isSamePassword = await comparePassword(
+    payload.newPassword,
+    userExists.password
+  );
+  if (isSamePassword)
+    throw new AppError(
+      STATUS_CODE.BAD_REQUEST,
+      "New password cannot be the same as the old password"
+    );
 
   const hashedPassword = await hashPassword(payload.newPassword);
 
@@ -65,8 +85,10 @@ const changePassword = async (
     },
   });
 
+  const { password, ...userWithoutPassword } = updatedUser;
+
   return {
-    updatedUser,
+    user: userWithoutPassword,
   };
 };
 

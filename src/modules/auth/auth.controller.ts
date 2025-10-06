@@ -13,6 +13,7 @@ const login = catchAsync(async (req: Request, res: Response) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24,
   });
 
   sendResponse(res, {
@@ -37,20 +38,19 @@ const logout = catchAsync(async (req: Request, res: Response) => {
     statusCode: STATUS_CODE.OK,
     success: true,
     message: "Logout successfully",
-    data: null,
   });
 });
 
 const changePassword = catchAsync(async (req: Request, res: Response) => {
-  const user = req.user;
   const payload = req.body;
-  const result = await AuthService.changePassword(payload, user as AuthPayload);
+  const user = req.user as AuthPayload;
+  const result = await AuthService.changePassword(payload, user);
 
   sendResponse(res, {
     statusCode: STATUS_CODE.OK,
     success: true,
     message: "Password changed successfully",
-    data: result.updatedUser,
+    data: result.user,
   });
 });
 
