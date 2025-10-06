@@ -11,9 +11,12 @@ export const slugify = (text: string) => {
     .replace(/^-+|-+$/g, "");
 };
 
-export const generateSlug = async (
-  modelName: string,
-  field: string,
+export const generateSlug = async <
+  T extends keyof typeof prisma,
+  K extends string
+>(
+  modelName: T,
+  field: K,
   value: string
 ) => {
   let slug = slugify(value);
@@ -26,9 +29,16 @@ export const generateSlug = async (
     throw new AppError(STATUS_CODE.NOT_FOUND, "Model not found");
   }
 
-  while (await model.findUnique({ where: { [field]: uniqueSlug } })) {
-    uniqueSlug = `${slug}-${counter}`;
-    counter++;
+  try {
+    while (await model.findUnique({ where: { [field]: uniqueSlug } })) {
+      uniqueSlug = `${slug}-${counter}`;
+      counter++;
+    }
+  } catch (error) {
+    throw new AppError(
+      STATUS_CODE.BAD_REQUEST,
+      `Error generating unique slug!`
+    );
   }
 
   return uniqueSlug;

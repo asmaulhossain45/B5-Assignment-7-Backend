@@ -1,10 +1,12 @@
 import bcrypt from "bcrypt";
 import { envConfig } from "../config/envConfig";
 
-export const hashPassword = async (plain: string) => {
-  return await bcrypt.hash(plain, envConfig.JWT.SALT_ROUND);
+const SALT_ROUNDS = envConfig.JWT.SALT_ROUND || 10;
+
+export const hashPassword = (plain: string) => {
+  return bcrypt.hash(plain, SALT_ROUNDS);
 };
 
-export const comparePassword = async (plain: string, hashed: string) => {
-  return await bcrypt.compare(plain, hashed);
+export const comparePassword = (plain: string, hashed: string) => {
+  return bcrypt.compare(plain, hashed);
 };

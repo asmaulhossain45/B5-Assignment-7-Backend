@@ -5,6 +5,7 @@ import { envConfig } from "./config/envConfig";
 import shutDownHandler from "./middleware/shutDownHandler";
 
 let server: Server;
+const port = envConfig.PORT || 5000;
 
 const startServer = async () => {
   try {
@@ -13,7 +14,7 @@ const startServer = async () => {
     server = http.createServer(app);
 
     server.listen(envConfig.PORT, () => {
-      console.info("✅ Server started successfully!");
+      console.info(`✅ Server started successfully on ${port}`);
     });
 
     shutDownHandler(server);

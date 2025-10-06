@@ -4,6 +4,7 @@ dotenv.config();
 
 interface EnvConfig {
   PORT: number;
+  NODE_ENV: string;
   DB_URL: string;
   FRONTEND_URL: string;
   JWT: {
@@ -26,6 +27,7 @@ interface EnvConfig {
 const loadEnvVariables = (): EnvConfig => {
   const requiredEnvVariables: string[] = [
     "PORT",
+    "NODE_ENV",
     "DB_URL",
     "FRONTEND_URL",
     "JWT_SECRET",
@@ -47,6 +49,7 @@ const loadEnvVariables = (): EnvConfig => {
 
   return {
     PORT: Number(process.env.PORT),
+    NODE_ENV: process.env.NODE_ENV as string,
     DB_URL: process.env.DB_URL as string,
     FRONTEND_URL: process.env.FRONTEND_URL as string,
     JWT: {

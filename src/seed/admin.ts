@@ -8,6 +8,7 @@ const seedAdmin = async () => {
   const email = envConfig.ADMIN.EMAIL;
 
   const password = await hashPassword(envConfig.ADMIN.PASSWORD);
+  console.log("⚙️ Seeding admin...");
 
   const admin = await prisma.user.upsert({
     where: { email },
